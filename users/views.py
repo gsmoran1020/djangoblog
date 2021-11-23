@@ -8,7 +8,7 @@ def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            form.save()  # This is how we save a new user. This even automatically hashes the password. Convenient.
+            form.save() 
             messages.success(request, f'Your account has been created! You are now able to login.')
             return redirect('login')
     else:
@@ -18,15 +18,15 @@ def register(request):
 
 @login_required
 def profile(request):
+    # Checks user and profile form inputs and updates accordingly
     if request.method == 'POST':
-        # instance= allows us to fill in the form fields with current info
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
             messages.success(request, f'Your account has been Updated!')
-            return redirect('users-profile')
+            return redirect('users-profile') 
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)

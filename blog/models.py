@@ -18,6 +18,7 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
 
+    # For displaying the total likes of a post to users
     def total_likes(self):
         return self.likes.count()
 

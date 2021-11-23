@@ -11,6 +11,7 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
 
+    # Override of save method allows us to implement image resizing for user submitted profile images
     def save(self, **kwargs):
         super().save()
 

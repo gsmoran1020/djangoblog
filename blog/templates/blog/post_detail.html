@@ -1,0 +1,58 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+        <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                    <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+                    {% if post.author == user %}
+                        <div>
+                            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' post.id %}">Update</a>
+                            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' post.id %}">Delete</a>
+                        </div>
+                    {% endif %}
+                </div>
+                <h2 class="article-title">{{ post.title }}</h2>
+                <p class="article-content">{{ post.content }}</p>
+            </div>
+        </article>
+        {% if user.is_authenticated %}
+        <form action="{% url 'like-post' post.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" name="post_id" value="{{ post.id }}" class="btn"><i class="far fa-thumbs-up"></i> <p>{{ post.total_likes }}</p></button>
+        </form>
+        {% else %}
+        <i class="far fa-thumbs-up"></i> <p>{{ post.total_likes }}</p>
+        {% endif %}
+        <br>
+        <h2>Comments</h2>
+        {% if not post.comments.all %}
+            No Comments Yet...
+
+        {% else %}
+            {% for comment in post.comments.all %}
+            <article class="media content-section">
+                <img class="rounded-circle article-img" src="{{ comment.author.profile.image.url }}" alt="">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2" href="{% url 'user-posts' comment.author.username %}">{{ comment.author }}</a>
+                        <small class="text-muted">{{ comment.date_posted|date:"F d, Y" }}</small>
+                    </div>
+                    <p class="article-content">{{ comment.content }}</p>
+                </div>
+            </article>
+            {% endfor %}
+        {% endif %}
+        
+        {% if user != post.author and user.is_authenticated %}
+        <h5>Post Comment</h5>
+        <hr>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" class='btn btn-outline-info' value='Post'>
+        </form>
+        {% endif %}
+{% endblock content %}
